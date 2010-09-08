@@ -39,4 +39,8 @@ class Connection(BaseConnection):
             self._dispatcherror(e)
 
     def connect(self, address, timeout=1):
+        """
+        Connects to the given address. Timeout specifies how
+        long the connection attempt should last before giving up.
+        """
         self._connect(address, timeout)

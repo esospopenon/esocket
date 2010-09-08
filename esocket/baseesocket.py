@@ -37,10 +37,6 @@ class BaseEsocket(object):
     """
 
     def __init__(self, eloop, sock):
-        """
-        Socket can eighter be an already created socket, or a 3-item
-        tuple consisting of the sockets family, type and protocol
-        """
         self._socket = sock
         self._socket.setblocking(False)
 
@@ -56,6 +52,7 @@ class BaseEsocket(object):
     def _close(self):
         """
         Do the real socket close, for use by subclasses.
+        Dispatches the "disconnected" event.
         """
         try:
             self.shutdown(True, True)
@@ -122,6 +119,12 @@ class BaseEsocket(object):
         raise NotImplementedError
 
     def shutdown(send=True, recv=True):
+        """
+        Shutdown signals to the connected peer that this socket
+        will not be sending or receiving any more data. The socket
+        will automatically shutdown both sending and receiving before
+        it is closed.
+        """
         if send and recv:
             self._socket.shutdown(socket.SHUT_RDWR)
         elif send and not recv:

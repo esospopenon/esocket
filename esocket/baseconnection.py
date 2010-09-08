@@ -30,6 +30,12 @@ class BaseConnection(BaseEsocket):
     * Connected - Dispatched when the connection has a peer
     * Disconnected - Dispatched when the peer is lost
     * Error - Dispatched when an error occured
+
+    In addition, it will call the connectionhandler object with
+    the following events:
+    * Connected - Dispatched when the connection has a peer
+    * Disconnected - Dispatched when the peer is lost
+    * Error - Dispatched when an error occured
     * Timeout - Dispatched if a timeout occured
     * Data - Dispatched when new data has arrived
     """
@@ -61,6 +67,9 @@ class BaseConnection(BaseEsocket):
 #-----------------------------------------------------------------------
 
     def _hcall(self, event, data):
+        # hcall invokes the specified event method in the
+        # connectionhandler, supplies it with the caller (self)
+        # and data and returns a boolean value.
         try:
             return bool(getattr(self._handler, event)(self, data))
         except:
@@ -158,6 +167,10 @@ class BaseConnection(BaseEsocket):
 
     @property
     def timeout(self):
+        """
+        Setting a socket timeout will trigger a timeout event every
+        specified seconds. Set to None to disable.
+        """
         if self._etimeout is not None:
             return self._etimeout.repeat
         else:
@@ -181,13 +194,21 @@ class BaseConnection(BaseEsocket):
 
     def close(self):
         self._close()
+
+        # Stop and release the event objects
         self._esend.stop()
         self._erecv.stop()
         self._esend = None
         self._erecv = None
+
+        # Release the connectionhandler
         self._handler = None
 
     def send(self, data):
+        """
+        Send data to the connected peer. Will raise an error if the
+        amount of data exceeds the size of the sendbuffer.
+        """
         try:
             self._sendsize += len(data)
             if self._sendsize > self._maxsend:
@@ -202,6 +223,9 @@ class BaseConnection(BaseEsocket):
             self._dispatcherror(e)
 
     def recv(self, count):
+        """
+        Get <count> bytes from the sockets receivebuffer.
+        """
         if count > self._recvsize or count < 0:
             count = self._recvsize
 

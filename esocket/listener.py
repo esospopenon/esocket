@@ -172,6 +172,8 @@ class Listener(BaseEsocket):
     def listen(self, address, backlog=5):
         """
         Start listening on the given address.
+        Backlog specifies how many connections to keep in queue
+        before starting to reject peers with a 'full' message.
         """
 
         try:
