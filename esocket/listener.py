@@ -149,6 +149,18 @@ class Listener(BaseEsocket):
 
         return self._peercount
 
+    @property
+    def maxpeers(self):
+        """
+        Return the maximum number of peers allowed to connect
+        to this listener.
+        """
+        return self._maxpeers
+
+    @maxpeers.setter
+    def maxpeers(self, peernum):
+        self._maxpeers = peernum
+
 #-----------------------------------------------------------------------
 # Public Events
 #-----------------------------------------------------------------------
