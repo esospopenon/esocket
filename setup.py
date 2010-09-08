@@ -33,9 +33,9 @@ License :: OSI Approved :: GNU General Public License (GPL)
 
 setup(name='esocket',
     version='0.1.0',
-    description='an asynchronous eventsocket library using pyev',
+    description='An asynchronous eventsocket library using pyev',
     author='Espen Rønnevik',
     author_email='brightside@quasinet.org',
-    url='http://github-blabla',
+    url='http://github.com/esospopenon/esocket',
     packages=['esocket'],
     classifiers=CLASSIFIERS)
