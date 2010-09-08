@@ -187,7 +187,7 @@ class Listener(BaseEsocket):
         forcibly removed later with the closepeers() method.
         """
 
-        if self.isactive:
+        if self._active:
             self._accepting = False
             self._eaccept.stop()
             self._eaccept = None
