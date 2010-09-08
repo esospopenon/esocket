@@ -66,7 +66,6 @@ class Listener(BaseEsocket):
     def _disconnecthandler(self, caller, data):
         self._peers.remove(caller)
         self._peercount -= 1
-        print('Connected peers: {}'.format(self._peercount))
         assert(self.peers == len(self._peers))
 
     def _listen(self, address, backlog):
@@ -98,7 +97,6 @@ class Listener(BaseEsocket):
 
                 # Ask the peerhandler if its okay to accept connection
                 if self._dispatchpeer(addr):
-                    print('Accepted peer')
                     peer = self._peerfactory.build(self, sock)
 
                     # The listener wants to be notified when a peer
@@ -109,13 +107,11 @@ class Listener(BaseEsocket):
                     # of connections.
                     self._peers.add(peer)
                     self._peercount += 1
-                    print('Connected peers: {}'.format(self._peercount))
 
                     assert(self._peercount == len(self._peers))
                 else:
                     # Accepthandler indicated that the connection
                     # is not wanted, close the socket.
-                    print('Closing peer connection')
                     sock.shutdown(socket.SHUT_RDWR)
                     sock.close()
 
@@ -191,8 +187,8 @@ class Listener(BaseEsocket):
         forcibly removed later with the closepeers() method.
         """
 
-        if not self.isactive:
-            self._active = False
+        if self.isactive:
+            self._accepting = False
             self._eaccept.stop()
             self._eaccept = None
             self._close()
@@ -204,12 +200,13 @@ class Listener(BaseEsocket):
         # will not be dispatched until all peers have closed their
         # connection or they are forcibly removed with closepeers()
 
-        if delay:
-            self._edelay = pyev.Idle(self._eloop, self._delayhandler)
-            self._edelay.start()
-        else:
-            self.closepeers()
-            self._dispatchdisconnected()
+            if delay:
+                self._edelay = pyev.Idle(self._eloop, self._delayhandler)
+                self._edelay.start()
+            else:
+                self.closepeers()
+                self._active = False
+                self._dispatchdisconnected()
 
     def closepeers(self):
         """

@@ -60,10 +60,6 @@ class BaseEsocket(object):
             pass
         finally:
             self._socket.close()
-            self._active = False
-
-            # After a close, dispatch the disconnected event
-            self._dispatchdisconnected()
 
     # Callhandler for events
     def _ecall(self, event, data):
