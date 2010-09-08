@@ -54,10 +54,6 @@ def sockdisconnected(caller, data):
 
 if __name__ == '__main__':
 
-    host = 'localhost'
-    port = 9000
-    addr = (host, port)
-
     loop = pyev.default_loop()
     pf = PeerFactory(loop, EchoServer)
 
@@ -65,5 +61,5 @@ if __name__ == '__main__':
         {'ondisconnected': sockdisconnected, 'onpeer': sockpeer})
 
     print('listening')
-    l.listen(addr)
+    l.listen('localhost', 9000)
     loop.loop()

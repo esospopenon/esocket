@@ -66,15 +66,11 @@ def sockdisconnected(caller, data):
 
 if __name__ == '__main__':
 
-    host = 'localhost'
-    port = 9000
-    addr = (host, port)
-
     loop = pyev.default_loop()
 
     c = TCPConnection(loop, EchoClient(),
         {'ondisconnected': sockdisconnected})
 
     print('connecting')
-    c.connect(addr)
+    c.connect('localhost', 9000)
     loop.loop()

@@ -43,6 +43,13 @@ class TCPConnection(Connection):
             except:
                 raise ValueError
 
+    def connect(self, host=socket.INADDR_ANY, port=0, timeout=1):
+        if host == '<broadcast>':
+            host = socket.INADDR_BROADCAST
+
+        self._connect((host, port), timeout)
+
+
 class TCPListener(Listener):
 
     def __init__(self, eloop, peerfactory, events=None,
@@ -64,3 +71,9 @@ class TCPListener(Listener):
                         self.onpeer = f
             except:
                 raise ValueError
+
+    def listen(self, host=socket.INADDR_ANY, port=0, backlog=5):
+        if host == '<broadcast>':
+            host = socket.INADDR_BROADCAST
+
+        self._listen((host, port), backlog)
