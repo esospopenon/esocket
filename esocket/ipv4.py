@@ -44,6 +44,8 @@ class TCPConnection(Connection):
                 raise ValueError
 
     def connect(self, host=socket.INADDR_ANY, port=0, timeout=1):
+
+        # Support the same conventions as the normal py-socket
         if host == '<broadcast>':
             host = socket.INADDR_BROADCAST
 
