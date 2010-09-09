@@ -240,3 +240,14 @@ class BaseConnection(BaseEsocket):
         self._recvsize -= count
 
         return recved
+
+    def recvchunk(self, term):
+        """
+        Receive a chunk of data from the socket, up to and
+        including the terminator specified.
+
+        Raises a ValueError exception when no more chunks can
+        be received.
+        """
+
+        return self.recv(self._recvbuf.index(term)+len(term))
