@@ -185,7 +185,7 @@ class BaseConnection(BaseEsocket):
         if seconds is not None:
             self._etimeout = pyev.Timer(seconds, seconds,
                                         self._eloop,
-                                        self._timeoutevent)
+                                        self._timeouthandler)
             self._etimeout.start()
 
 #-----------------------------------------------------------------------
