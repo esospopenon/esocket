@@ -239,7 +239,7 @@ class BaseConnection(BaseEsocket):
         self._recvbuf = self._recvbuf[count:]
         self._recvsize -= count
 
-        return recved
+        return bytes(recved)
 
     def recvchunk(self, term):
         """
