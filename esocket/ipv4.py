@@ -53,10 +53,10 @@ class TCPConnection(Connection):
 
 class TCPListener(Listener):
 
-    def __init__(self, eloop, peerfactory, events=None):
+    def __init__(self, eloop, handlercls, events=None):
 
         super().__init__(eloop, socket.AF_INET, socket.SOCK_STREAM, 0,
-                         peerfactory)
+                         handlercls)
 
         if events is not None:
             try:

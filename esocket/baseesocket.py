@@ -22,6 +22,7 @@
     TODO: Write a description.
 """
 
+import sys
 import _socket as socket
 
 import pyev
@@ -120,7 +121,8 @@ class BaseEsocket(object):
         """
         return self._data
 
-    @data.setter(self, data):
+    @data.setter
+    def data(self, data):
         self._data = data
 
     @property

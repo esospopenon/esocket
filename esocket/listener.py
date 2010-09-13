@@ -22,7 +22,7 @@ import _socket as socket
 import pyev
 
 from esocket.baseesocket import BaseEsocket
-from esocket.connections import PeerConnection
+from esocket.connection import PeerConnection
 
 class Listener(BaseEsocket):
     """
