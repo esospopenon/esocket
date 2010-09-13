@@ -43,3 +43,26 @@ class Connection(BaseConnection):
         long the connection attempt should last before giving up.
         """
         self._connect(address, timeout)
+
+
+class PeerConnection(BaseConnection):
+    """
+    When a Listener socket accepts a new connection, it creates
+    a new PeerConnection object.
+    """
+
+    def __init__(self, eloop, listener, sock, connhandler):
+
+        super().__init__(eloop, sock, connhandler)
+
+        self._listener = listener
+        self._dispatchconnected()
+        self._erecv.start()
+
+    @property
+    def listener(self):
+        return self._listener
+
+    def close(self):
+        super().close()
+        self._listener = None

@@ -22,7 +22,7 @@ import _socket as socket
 import pyev
 
 from esocket.baseesocket import BaseEsocket
-from esocket.peer import PeerConnection
+from esocket.connections import PeerConnection
 
 class Listener(BaseEsocket):
     """
@@ -41,18 +41,18 @@ class Listener(BaseEsocket):
     * Peer - Fired when a new peer tries to connect
     """
 
-    def __init__(self, eloop, family, type, proto, peerfactory):
+    def __init__(self, eloop, family, type, proto, clshandler):
 
         super().__init__(eloop, socket.socket(family, type, proto))
 
         self._peers = set()
         self._peercount = 0
         self._maxpeers = sys.maxsize
-        self._peerfactory = peerfactory
         self._accepting = False
 
         self._eaccept = pyev.Io(self._socket, pyev.EV_READ,
-                                self._eloop, self._accepthandler)
+                                self._eloop, self._accepthandler,
+                                clshandler)
 
 #-----------------------------------------------------------------------
 # Private Methods
@@ -94,7 +94,18 @@ class Listener(BaseEsocket):
 
                 # Ask the peerhandler if its okay to accept connection
                 if self._dispatchpeer(addr):
-                    peer = self._peerfactory.build(self, sock)
+                    peerhandler = watcher.data()
+                    peer = PeerConnection(self._eloop,
+                                          self,
+                                          sock,
+                                          peerhandler)
+
+                    if self._etimeout is not None:
+                        peer.timeout = self._timeout
+                    if self._maxsend is not None:
+                        peer.maxsend = self._maxsend
+                    if self._maxrecv is not None:
+                        peer.maxrecv = self._maxrecv
 
                     # The listener wants to be notified when a peer
                     # disconnects, so cleanup can be performed
