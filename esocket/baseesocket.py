@@ -45,6 +45,7 @@ class BaseEsocket(object):
 
         self._eventmap = {}
 
+        self._data = None
         self._etimeout = None
         self._maxsend = sys.maxsize
         self._maxrecv = sys.maxsize
@@ -109,6 +110,18 @@ class BaseEsocket(object):
         or if it is listening for someone to connect.
         """
         return self._active
+
+    @property
+    def data(self):
+        """
+        Data can be used to associate any python object with a socket,
+        which then can be accessed from the sockets eventhandlers.
+        A listener will set the data object on all peers connecting.
+        """
+        return self._data
+
+    @data.setter(self, data):
+        self._data = data
 
     @property
     def timeout(self):

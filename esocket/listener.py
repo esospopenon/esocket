@@ -106,6 +106,8 @@ class Listener(BaseEsocket):
                         peer.maxsend = self._maxsend
                     if self._maxrecv is not None:
                         peer.maxrecv = self._maxrecv
+                    if self._data is not None:
+                        peer.data = self._data
 
                     # The listener wants to be notified when a peer
                     # disconnects, so cleanup can be performed

@@ -51,18 +51,9 @@ class PeerConnection(BaseConnection):
     a new PeerConnection object.
     """
 
-    def __init__(self, eloop, listener, sock, connhandler):
+    def __init__(self, eloop, sock, connhandler):
 
         super().__init__(eloop, sock, connhandler)
 
-        self._listener = listener
         self._dispatchconnected()
         self._erecv.start()
-
-    @property
-    def listener(self):
-        return self._listener
-
-    def close(self):
-        super().close()
-        self._listener = None
