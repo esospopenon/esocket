@@ -1,2 +1,8 @@
+# Distutils build directory
 build
+
+# Python bytecode
 *.pyc
+
+# Geany projectfile
+esocket.geany
