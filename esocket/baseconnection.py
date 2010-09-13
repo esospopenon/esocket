@@ -40,8 +40,7 @@ class BaseConnection(BaseEsocket):
     * Data - Dispatched when new data has arrived
     """
 
-    def __init__(self, eloop, sock, connhandler,
-                 timeout, maxsend, maxrecv):
+    def __init__(self, eloop, sock, connhandler):
 
         super().__init__(eloop, sock)
         self._handler = connhandler
@@ -53,14 +52,13 @@ class BaseConnection(BaseEsocket):
                               self._eloop, self._recvhandler)
 
         self._etimeout = None
-        self.timeout = timeout
 
         self._sendbuf = bytearray()
         self._sendsize = 0
-        self._maxsend = maxsend
+        self._maxsend = sys.maxsize
         self._recvbuf = bytearray()
         self._recvsize = 0
-        self._maxrecv = maxrecv
+        self._maxrecv = sys.maxsize
 
 #-----------------------------------------------------------------------
 # Private Methods
@@ -171,6 +169,7 @@ class BaseConnection(BaseEsocket):
         Setting a socket timeout will trigger a timeout event every
         specified seconds. Set to None to disable.
         """
+
         if self._etimeout is not None:
             return self._etimeout.repeat
         else:
@@ -187,6 +186,30 @@ class BaseConnection(BaseEsocket):
                                         self._eloop,
                                         self._timeouthandler)
             self._etimeout.start()
+
+    @property
+    def maxsend(self):
+        """
+        Specifies the maximum size of the sockets sendqueue.
+        """
+
+        return self._maxsend
+
+    @maxsend.setter
+    def maxsend(self, maxvalue):
+        self._maxsend = maxvalue
+
+    @property
+    def maxrecv(self):
+        """
+        Specifies the maximum size of the sockets receivequeue.
+        """
+
+        return self._maxrecv
+
+    @maxrecv.setter
+    def maxrecv(self, maxvalue):
+        self._maxrecv = maxvalue
 
 #-----------------------------------------------------------------------
 # Public Methods

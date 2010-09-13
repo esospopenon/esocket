@@ -41,16 +41,13 @@ class Listener(BaseEsocket):
     * Peer - Fired when a new peer tries to connect
     """
 
-    def __init__(self, eloop, family, type, proto, peerfactory,
-                 maxpeers=sys.maxsize):
+    def __init__(self, eloop, family, type, proto, peerfactory):
 
         super().__init__(eloop, socket.socket(family, type, proto))
 
-
-
         self._peers = set()
         self._peercount = 0
-        self._maxpeers = maxpeers
+        self._maxpeers = sys.maxsize
         self._peerfactory = peerfactory
         self._accepting = False
 
@@ -155,6 +152,7 @@ class Listener(BaseEsocket):
         Return the maximum number of peers allowed to connect
         to this listener.
         """
+
         return self._maxpeers
 
     @maxpeers.setter

@@ -25,11 +25,10 @@ from esocket.listener import Listener
 
 class TCPConnection(Connection):
 
-    def __init__(self, eloop, connhandler, events=None,
-                timeout=None, maxsend=sys.maxsize, maxrecv=sys.maxsize):
+    def __init__(self, eloop, connhandler, events=None):
 
         super().__init__(eloop, socket.AF_INET, socket.SOCK_STREAM, 0,
-                         connhandler, timeout, maxsend, maxrecv)
+                         connhandler)
 
         if events is not None:
             try:
@@ -54,11 +53,10 @@ class TCPConnection(Connection):
 
 class TCPListener(Listener):
 
-    def __init__(self, eloop, peerfactory, events=None,
-                 maxpeers=sys.maxsize):
+    def __init__(self, eloop, peerfactory, events=None):
 
         super().__init__(eloop, socket.AF_INET, socket.SOCK_STREAM, 0,
-                         peerfactory, maxpeers)
+                         peerfactory)
 
         if events is not None:
             try:

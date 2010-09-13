@@ -22,11 +22,10 @@ from esocket.baseconnection import BaseConnection
 
 class Connection(BaseConnection):
 
-    def __init__(self, eloop, family, type, proto, connhandler,
-                timeout=None, maxsend=sys.maxsize, maxrecv=sys.maxsize):
+    def __init__(self, eloop, family, type, proto, connhandler):
 
         super().__init__(eloop, socket.socket(family, type, proto),
-                         connhandler, timeout, maxsend, maxrecv)
+                         connhandler)
 
     def _connect(self, address, timeout):
         try:

@@ -27,11 +27,9 @@ class PeerConnection(BaseConnection):
     a new PeerConnection object.
     """
 
-    def __init__(self, eloop, listener, sock, connhandler,
-                 timeout, maxsend, maxrecv):
+    def __init__(self, eloop, listener, sock, connhandler):
 
-        super().__init__(eloop, sock, connhandler,
-                         timeout, maxsend, maxrecv)
+        super().__init__(eloop, sock, connhandler)
 
         self._listener = listener
         self._dispatchconnected()
@@ -47,23 +45,60 @@ class PeerConnection(BaseConnection):
 
 class PeerFactory(object):
 
-    def __init__(self, eloop, handler,
-                 timeout=None,
-                 maxsend=sys.maxsize,
-                 maxrecv=sys.maxsize):
+    def __init__(self, eloop, handler):
 
         self._eloop = eloop
         self._handler = handler
 
-        self._timeout = timeout
-        self._maxsend = maxsend
-        self._maxrecv = maxrecv
+        self._timeout = None
+        self._maxsend = None
+        self._maxrecv = None
 
     def build(self, listener, sock):
-        ch = self._handler()
-        p = PeerConnection(self._eloop,
-                           listener, sock, ch,
-                           self._timeout,
-                           self._maxsend,
-                           self._maxrecv)
+        p = PeerConnection(self._eloop, listener, sock, self._handler())
+
+        if self._timeout is not None:
+            p.timeout = self._timeout
+        if self._maxsend is not None:
+            p.maxsend = self._maxsend
+        if self._maxrecv is not None:
+            p.maxrecv = self._maxrecv
+
         return p
+
+    @property
+    def timeout(self):
+        """
+        Specifies the amount of time before triggering a new peers
+        timeout event. Defaults to None.
+        """
+
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, seconds):
+        self._timeout = seconds
+
+    @property
+    def maxsend(self):
+        """
+        Specifies the maximum size of the peers sendqueue.
+        """
+
+        return self._maxsend
+
+    @maxsend.setter
+    def maxsend(self, maxvalue):
+        self._maxsend = maxvalue
+
+    @property
+    def maxrecv(self):
+        """
+        Specifies the maximum size of the peers receivequeue.
+        """
+
+        return self._maxrecv
+
+    @maxrecv.setter
+    def maxrecv(self, maxvalue):
+        self._maxrecv = maxvalue
