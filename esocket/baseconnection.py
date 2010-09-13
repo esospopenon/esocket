@@ -51,14 +51,10 @@ class BaseConnection(BaseEsocket):
         self._erecv = pyev.Io(self._socket, pyev.EV_READ,
                               self._eloop, self._recvhandler)
 
-        self._etimeout = None
-
         self._sendbuf = bytearray()
         self._sendsize = 0
-        self._maxsend = sys.maxsize
         self._recvbuf = bytearray()
         self._recvsize = 0
-        self._maxrecv = sys.maxsize
 
 #-----------------------------------------------------------------------
 # Private Methods
@@ -186,30 +182,6 @@ class BaseConnection(BaseEsocket):
                                         self._eloop,
                                         self._timeouthandler)
             self._etimeout.start()
-
-    @property
-    def maxsend(self):
-        """
-        Specifies the maximum size of the sockets sendqueue.
-        """
-
-        return self._maxsend
-
-    @maxsend.setter
-    def maxsend(self, maxvalue):
-        self._maxsend = maxvalue
-
-    @property
-    def maxrecv(self):
-        """
-        Specifies the maximum size of the sockets receivequeue.
-        """
-
-        return self._maxrecv
-
-    @maxrecv.setter
-    def maxrecv(self, maxvalue):
-        self._maxrecv = maxvalue
 
 #-----------------------------------------------------------------------
 # Public Methods

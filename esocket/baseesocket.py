@@ -45,6 +45,10 @@ class BaseEsocket(object):
 
         self._eventmap = {}
 
+        self._etimeout = None
+        self._maxsend = sys.maxsize
+        self._maxrecv = sys.maxsize
+
 #-----------------------------------------------------------------------
 # Private Methods
 #-----------------------------------------------------------------------
@@ -105,6 +109,44 @@ class BaseEsocket(object):
         or if it is listening for someone to connect.
         """
         return self._active
+
+    @property
+    def timeout(self):
+        """
+        Returns how many seconds will pass before the connections
+        timeout event is triggered. The timeout event is disabled
+        if set to None (default).
+        """
+
+        return self._etimeout
+
+    @timeout.setter
+    def timeout(self, seconds):
+        self._etimeout = seconds
+
+    @property
+    def maxsend(self):
+        """
+        Specifies the maximum size of the sockets sendqueue.
+        """
+
+        return self._maxsend
+
+    @maxsend.setter
+    def maxsend(self, maxvalue):
+        self._maxsend = maxvalue
+
+    @property
+    def maxrecv(self):
+        """
+        Specifies the maximum size of the sockets receivequeue.
+        """
+
+        return self._maxrecv
+
+    @maxrecv.setter
+    def maxrecv(self, maxvalue):
+        self._maxrecv = maxvalue
 
 #-----------------------------------------------------------------------
 # Public methods
