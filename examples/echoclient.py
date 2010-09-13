@@ -23,7 +23,6 @@
 import pyev
 
 from esocket.ipv4 import TCPConnection
-from esocket.peer import PeerFactory
 from esocket.connectionhandler import ConnectionHandler
 
 

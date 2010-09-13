@@ -23,7 +23,6 @@
 import pyev
 
 from esocket.ipv4 import TCPListener
-from esocket.peer import PeerFactory
 from esocket.connectionhandler import ConnectionHandler
 
 
@@ -55,9 +54,8 @@ def sockdisconnected(caller, data):
 if __name__ == '__main__':
 
     loop = pyev.default_loop()
-    pf = PeerFactory(loop, EchoServer)
 
-    l = TCPListener(loop, pf,
+    l = TCPListener(loop, EchoServer,
         {'ondisconnected': sockdisconnected, 'onpeer': sockpeer})
 
     print('listening')
