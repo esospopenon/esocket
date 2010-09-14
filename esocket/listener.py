@@ -96,7 +96,6 @@ class Listener(BaseEsocket):
                 if self._dispatchpeer(addr):
                     peerhandler = watcher.data()
                     peer = PeerConnection(self._eloop,
-                                          self,
                                           sock,
                                           peerhandler)
 
