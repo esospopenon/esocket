@@ -192,13 +192,17 @@ class BaseConnection(BaseEsocket):
             self._close()
 
             # Stop and release the event objects
+            self.timeout(None)
             self._esend.stop()
             self._erecv.stop()
             self._esend = None
             self._erecv = None
 
-            # Release the connectionhandler
+            # Release the connectionhandler, dataobject and buffers
             self._handler = None
+            self._data = None
+            self._sendbuf = None
+            self._recvbuf = None
 
             # After a close, set as inactive and
             # dispatch the disconnected event
