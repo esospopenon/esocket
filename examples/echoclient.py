@@ -37,11 +37,8 @@ class EchoClient(ConnectionHandler):
         except:
             print('Done!')
 
-            # Send server shutdown command
-            caller.send('!SHUTDOWN\n'.encode('utf-8'))
-
-            # Close our own socket
-            caller.close()
+            # Send shutdown command after 5 seconds
+            caller.timeout = 5
 
     def connected(self, caller, data):
         self.sendline(caller)
@@ -65,7 +62,11 @@ class EchoClient(ConnectionHandler):
         print('Client Error: {}'.format(data))
 
     def timeout(self, caller, data):
-        pass
+        # Send server shutdown command
+        caller.send('!SHUTDOWN\n'.encode('utf-8'))
+
+        # Close our own socket
+        caller.close()
 
 def sockdisconnected(caller, data):
     loop.unloop()
