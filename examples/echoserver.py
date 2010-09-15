@@ -28,15 +28,19 @@ class EchoServer(ConnectionHandler):
         pass
 
     def data(self, caller, data):
-        term = data.index(b'\n')
-        line = caller.recv(term+1)
-        caller.send(line)
+        line = caller.recvchunk(b'\n').decode('utf-8')
+
+        if line == '!SHUTDOWN\n':
+            print('Recieved shutdown command, stopping server')
+            caller.data.close()
+        else:
+            caller.send(line.encode('utf-8'))
 
     def disconnected(self, caller, data):
         pass
 
     def error(self, caller, data):
-        print('Peer event: Error {}'.format(data))
+        print('Peer Error: {}'.format(data))
 
     def timeout(self, caller, data):
         pass
