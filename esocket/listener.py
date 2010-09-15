@@ -50,6 +50,7 @@ class Listener(BaseEsocket):
         self._maxpeers = sys.maxsize
         self._accepting = False
 
+        self._edelay = None
         self._eaccept = pyev.Io(self._socket, pyev.EV_READ,
                                 self._eloop, self._accepthandler,
                                 clshandler)
@@ -107,6 +108,8 @@ class Listener(BaseEsocket):
                         peer.maxrecv = self._maxrecv
                     if self._data is not None:
                         peer.data = self._data
+                    else:
+                        peer.data = self
 
                     # The listener wants to be notified when a peer
                     # disconnects, so cleanup can be performed
@@ -204,23 +207,16 @@ class Listener(BaseEsocket):
         """
         Closes the listening socket.
 
-        If kill is False, peers already connected through the
+        If delay is False, peers already connected through the
         listener will be allowed to remain connected. They can be
         forcibly removed later with the closepeers() method.
         """
 
-        if self._active:
+        if self._accepting:
             self._accepting = False
             self._eaccept.stop()
             self._eaccept = None
             self._close()
-
-        # If the listener is closed with delay as true, the
-        # listener will close its own socket and stop accepting
-        # new connections, but will allow peers already connected
-        # to remain connected. In this case, the "disconnected" event
-        # will not be dispatched until all peers have closed their
-        # connection or they are forcibly removed with closepeers()
 
             if delay:
                 self._edelay = pyev.Idle(self._eloop, self._delayhandler)
@@ -240,5 +236,5 @@ class Listener(BaseEsocket):
 
         self._peercount = 0
 
-        if self._edelay.active:
+        if self._edelay is not None and self._edelay.active:
             self._delayhandler()
