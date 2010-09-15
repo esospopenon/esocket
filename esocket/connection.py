@@ -33,6 +33,7 @@ class Connection(BaseConnection):
             self._socket.connect(address)
             self._socket.settimeout(None)
             self._erecv.start()
+            self._active = True
             self._dispatchconnected()
         except socket.error as e:
             self._dispatcherror(e)
@@ -55,5 +56,6 @@ class PeerConnection(BaseConnection):
 
         super().__init__(eloop, sock, connhandler)
 
+        self._active = True
         self._dispatchconnected()
         self._erecv.start()
