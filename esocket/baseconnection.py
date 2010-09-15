@@ -128,13 +128,13 @@ class BaseConnection(BaseEsocket):
                 if self._recvsize:
                     # Trigger dataevent if there is anything in the
                     # receive buffer
-                    self._dispatchdata(bytes(self._recvbuf))
+                    self._dispatchdata(len(self._recvbuf))
                 self.close()
             else:
-                self._dispatchdata(bytes(self._recvbuf))
+                self._dispatchdata(len(self._recvbuf))
 
     def _timeouthandler(self, watcher, event):
-        self._dispatchtimeout(None)
+        self._dispatchtimeout()
 
     # Event dispatchers
     def _dispatchconnected(self, data=None):
@@ -147,7 +147,10 @@ class BaseConnection(BaseEsocket):
 
     def _dispatchdisconnected(self, data=None):
         self._hcall('disconnected', data)
+        self._handler = None
+
         self._ecall('disconnected', data)
+        self._data = None
 
     def _dispatchtimeout(self, data=None):
         self._hcall('timeout', data)
@@ -173,15 +176,23 @@ class BaseConnection(BaseEsocket):
 
     @timeout.setter
     def timeout(self, seconds):
-        if self._etimeout is not None:
-            self._etimeout.stop()
-            self._etimeout = None
+        if seconds is None:
+            if self._etimeout is not None:
+                self._etimeout.stop()
+                self._etimeout = None
+        else:
+            if self._etimeout is not None:
+                self._etimeout.stop()
 
-        if seconds is not None:
             self._etimeout = pyev.Timer(seconds, seconds,
                                         self._eloop,
                                         self._timeouthandler)
+
             self._etimeout.start()
+
+    def timeoutrestart(self):
+        if self._etimeout is not None:
+            self.etimeout.again()
 
 #-----------------------------------------------------------------------
 # Public Methods
@@ -192,15 +203,13 @@ class BaseConnection(BaseEsocket):
             self._close()
 
             # Stop and release the event objects
-            self.timeout(None)
+            self.timeout = None
             self._esend.stop()
             self._erecv.stop()
             self._esend = None
             self._erecv = None
 
-            # Release the connectionhandler, dataobject and buffers
-            self._handler = None
-            self._data = None
+            # Release the buffers
             self._sendbuf = None
             self._recvbuf = None
 
