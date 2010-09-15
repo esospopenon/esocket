@@ -56,6 +56,6 @@ class PeerConnection(BaseConnection):
 
         super().__init__(eloop, sock, connhandler)
 
+        self._erecv.start()
         self._active = True
         self._dispatchconnected()
-        self._erecv.start()
