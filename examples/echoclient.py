@@ -16,8 +16,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Note: This client will read a file 'hamlet.txt' in the example path,
-# please
 
 import pyev
 
@@ -38,23 +36,33 @@ class EchoClient(ConnectionHandler):
             caller.send(self.currline.encode('utf-8'))
         except:
             print('Done!')
+
+            # Send server shutdown command
+            caller.send('!SHUTDOWN\n'.encode('utf-8'))
+
+            # Close our own socket
             caller.close()
 
     def connected(self, caller, data):
         self.sendline(caller)
 
     def data(self, caller, data):
-        term = data.index(b'\n')
-        line = caller.recv(term+1).decode('utf-8')
+        # Receive a \n terminated chunk from the socket
+        # and decode the bytes into a string.
+        line = caller.recvchunk(b'\n').decode('utf-8')
+
+        # Check that the line received from the server
+        # is the same as the current line just sent.
         if line != self.currline:
             print('received line - verification failed')
+
         self.sendline(caller)
 
     def disconnected(self, caller, data):
         pass
 
     def error(self, caller, data):
-        pass
+        print('Client Error: {}'.format(data))
 
     def timeout(self, caller, data):
         pass
