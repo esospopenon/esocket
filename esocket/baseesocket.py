@@ -58,8 +58,8 @@ class BaseEsocket(object):
     def _close(self):
         """
         Do the real socket close, for use by subclasses.
-        Dispatches the "disconnected" event.
         """
+
         try:
             self.shutdown(True, True)
         except Exception as e:
